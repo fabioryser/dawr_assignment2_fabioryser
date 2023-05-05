@@ -33,6 +33,7 @@ def coop_data(filename: str):
 
 
 def get_path_dynamically(folder: str, file: str, check_exists=True) -> Path:
+    """returns a path object to the file in the folder. If check_exists is True, it will raise an error if the file does not exist"""
     current_directory = Path.cwd()
     parent_directory = current_directory.parent
     current_folder = current_directory.name
@@ -56,6 +57,7 @@ def get_path_dynamically(folder: str, file: str, check_exists=True) -> Path:
 
 
 def get_coordinates_for_prontos(df: pd.DataFrame):
+    """adds two column with the coordinates to the coop data"""
     df['Longitude'] = None
     df['Latitude'] = None
 
@@ -119,6 +121,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
 
 def read_csv(folder: str, file: str) -> pd.DataFrame:
+    """reads a csv file and returns a pandas dataframe"""
     path = get_path_dynamically(folder, file)
     if (file == 'WGS84_koordinaten_2019.csv'):
         df = pd.read_csv(path, encoding='ISO-8859-1', header=0, sep=';')
@@ -130,6 +133,7 @@ def read_csv(folder: str, file: str) -> pd.DataFrame:
 
 
 def create_csv(folder: str, file: str, df: pd.DataFrame, index=False, overwrite=False) -> None:
+    """creates a csv file in the folder with the given name and writes the dataframe to it"""
     path = get_path_dynamically(folder, file, check_exists=False)
     if (not overwrite and not path.exists()):
         df.to_csv(path, index=index, na_rep='0')
@@ -138,6 +142,7 @@ def create_csv(folder: str, file: str, df: pd.DataFrame, index=False, overwrite=
 
 
 def preprocess_finance_df(df: pd.DataFrame) -> pd.DataFrame:
+    """preprocesses the finance data"""
     features = ['Gemeindename',
                 'Median Einkommen',
                 'Ergänzungsleistungen in % zu Median',
@@ -160,7 +165,7 @@ def preprocess_finance_df(df: pd.DataFrame) -> pd.DataFrame:
     return df[features]
 
 
-# funktion die zwei dataframes nimmt und sie zusammen merged, an 'Gemeinde' und 'Gemeindename' gemerged
 def merge_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+    """merges two dataframes on Gemeinde and Gemeindename"""
     df_merged = pd.merge(df1, df2, left_on='Gemeinde', right_on='Gemeindename', how='left')
     return df_merged
