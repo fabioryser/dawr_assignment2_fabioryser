@@ -1,0 +1,4 @@
+ChatGPT - zur Hilfe https://chat.openai.com/ [05.05.2023]
+Stackoverflow - https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points [05.05.2023]
+Stackoverflow - diverses [05.05.2023]
+Austausch mit Komolitone Pascal Reiss

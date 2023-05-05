@@ -1,3 +1,5 @@
+from typing import Optional
+
 import requests
 import pandas as pd
 from pathlib import Path
@@ -5,10 +7,10 @@ from pathlib import Path
 
 def read_data():
     """reads location data for each municipality and merges it with the ranking data"""
-    path = get_path_dynamically('data', 'safety-processed.csv')
+    path = get_file_path('data', 'safety-processed.csv')
     df_safety = pd.read_csv(path)
 
-    path = get_path_dynamically('data', 'WGS84_koordinaten_2019.csv')
+    path = get_file_path('data', 'WGS84_koordinaten_2019.csv')
     df_coordinates = pd.read_csv(path, encoding='ISO-8859-1', header=0, sep=';')
     df_coordinates = df_coordinates[df_coordinates['Kantonskürzel'] == 'LU']
     df_coordinates = df_coordinates.drop_duplicates(subset='Ortschaftsname', keep='first')
@@ -26,29 +28,30 @@ def read_data():
 
 def coop_data(filename: str):
     """adds a column with the search text to the coop data"""
-    path = get_path_dynamically('data', filename)
+    path = get_file_path('data', filename)
     df_coop = pd.read_csv(path, header=0, sep=',')
     df_coop['searchText'] = df_coop['Adresse'] + ' ' + df_coop['PLZ'].astype(str) + ' ' + df_coop['Ort']
     return df_coop
 
 
-def get_path_dynamically(folder: str, file: str, check_exists=True) -> Path:
+"""developed with Pascal Reiss, also dawr student"""
+def get_file_path(folder: str, file: str, check_exists: bool = True) -> Path:
     """returns a path object to the file in the folder. If check_exists is True, it will raise an error if the file does not exist"""
-    current_directory = Path.cwd()
-    parent_directory = current_directory.parent
-    current_folder = current_directory.name
-    parent_folder = parent_directory.name
+    cur_dir = Path.cwd()
+    parent_dir = cur_dir.parent
+    cur_folder = cur_dir.name
+    parent_folder = parent_dir.name
 
     path: Path
     # Check in what dir the code is executed
-    if (current_folder == 'dawr_assignment2_fabioryser'):
+    if (cur_folder == 'dawr_assignment2_fabioryser'):
         path = Path(folder, file)
-    elif (current_folder == 'src' and parent_folder == 'dawr_assignment2_fabioryser'):
+    elif (cur_folder == 'src' and parent_folder == 'dawr_assignment2_fabioryser'):
         path = Path('..', folder, file)
     else:
         # code uses dynamic paths so only these two directories work
         raise Exception(
-            f'Please execute .py files while your working directory is either /dawr_assignment2_fabioryser or /dawr_assignment2_fabioryser/src. Currently it is {current_folder}, which will not work.')
+            f'Please execute .py files while your working directory is either /dawr_assignment2_fabioryser or /dawr_assignment2_fabioryser/src. Currently it is {cur_folder}, which will not work.')
 
     # checks if file exists unless you specifically declare check_exists=False
     if (check_exists and not path.exists()):
@@ -91,9 +94,9 @@ def find_min_dist_to_next_pronto(df_municipality: pd.DataFrame, df_coop: pd.Data
     return df_municipality
 
 
-def search_api_to_json(searchText, layer):
+def search_api_to_json(searchtext: str, layer: str):
     _API_URL = 'https://api3.geo.admin.ch/rest/services/api/SearchServer'
-    url = f"{_API_URL}?type=locations&searchText={searchText}&origins={layer}"
+    url = f"{_API_URL}?type=locations&searchText={searchtext}&origins={layer}"
     return requests.get(url).json()
 
 
@@ -120,9 +123,10 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return c * r
 
 
+"""developed with Pascal Reiss, also dawr student"""
 def read_csv(folder: str, file: str) -> pd.DataFrame:
     """reads a csv file and returns a pandas dataframe"""
-    path = get_path_dynamically(folder, file)
+    path = get_file_path(folder, file)
     if (file == 'WGS84_koordinaten_2019.csv'):
         df = pd.read_csv(path, encoding='ISO-8859-1', header=0, sep=';')
     else:
@@ -132,10 +136,11 @@ def read_csv(folder: str, file: str) -> pd.DataFrame:
     return df
 
 
-def create_csv(folder: str, file: str, df: pd.DataFrame, index=False, overwrite=False) -> None:
+"""developed with Pascal Reiss, also dawr student"""
+def create_csv(folder: str, file: str, df: pd.DataFrame, index: bool = False, overwrite: bool =False) -> None:
     """creates a csv file in the folder with the given name and writes the dataframe to it"""
-    path = get_path_dynamically(folder, file, check_exists=False)
-    if (not overwrite and not path.exists()):
+    path = get_file_path(folder, file, check_exists=False)
+    if not overwrite and not path.exists():
         df.to_csv(path, index=index, na_rep='0')
     elif (overwrite):
         df.to_csv(path, mode='w', index=index, na_rep='0')
