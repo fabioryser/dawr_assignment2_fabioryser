@@ -33,7 +33,6 @@ def coop_data(filename: str):
 
 
 def get_path_dynamically(folder: str, file: str, check_exists=True) -> Path:
-
     current_directory = Path.cwd()
     parent_directory = current_directory.parent
     current_folder = current_directory.name
@@ -41,13 +40,14 @@ def get_path_dynamically(folder: str, file: str, check_exists=True) -> Path:
 
     path: Path
     # Check in what dir the code is executed
-    if (current_folder == 'Assignment2'):
+    if (current_folder == 'dawr_assignment2_fabioryser'):
         path = Path(folder, file)
-    elif (current_folder == 'src' and parent_folder == 'Assignment2'):
+    elif (current_folder == 'src' and parent_folder == 'dawr_assignment2_fabioryser'):
         path = Path('..', folder, file)
     else:
         # code uses dynamic paths so only these two directories work
-        raise Exception(f'Please execute .py files while your working directory is either /Assignment2 or /Assignment2/src. Currently it is {current_folder}, which will not work.')
+        raise Exception(
+            f'Please execute .py files while your working directory is either /dawr_assignment2_fabioryser or /dawr_assignment2_fabioryser/src. Currently it is {current_folder}, which will not work.')
 
     # checks if file exists unless you specifically declare check_exists=False
     if (check_exists and not path.exists()):
@@ -76,14 +76,15 @@ def find_min_dist_to_next_pronto(df_municipality: pd.DataFrame, df_coop: pd.Data
     for i, row in df_municipality.iterrows():
         distances = []
         for j, coop_row in df_coop.iterrows():
-            distance = haversine_distance(row['Latitude'], row['Longitude'], coop_row['Latitude'], coop_row['Longitude'])
+            distance = haversine_distance(row['Latitude'], row['Longitude'], coop_row['Latitude'],
+                                          coop_row['Longitude'])
             distances.append(distance)
         if distances:
             df_municipality.at[i, 'Distanz zu nächsten Prontoshop in km'] = min(distances)
     # Reorder columns so that Score is the first column
     cols = list(df_municipality.columns)
     score_index = cols.index('Score')
-    cols = [cols[score_index]] + cols[:score_index] + cols[score_index+1:]
+    cols = [cols[score_index]] + cols[:score_index] + cols[score_index + 1:]
     df_municipality = df_municipality.reindex(columns=cols)
     return df_municipality
 
@@ -119,7 +120,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
 def read_csv(folder: str, file: str) -> pd.DataFrame:
     path = get_path_dynamically(folder, file)
-    if(file == 'WGS84_koordinaten_2019.csv'):
+    if (file == 'WGS84_koordinaten_2019.csv'):
         df = pd.read_csv(path, encoding='ISO-8859-1', header=0, sep=';')
     else:
         df = pd.read_csv(path, na_values=['---', ''])
@@ -128,7 +129,7 @@ def read_csv(folder: str, file: str) -> pd.DataFrame:
     return df
 
 
-def create_csv(folder: str, file:str, df: pd.DataFrame, index=False, overwrite=False) -> None:
+def create_csv(folder: str, file: str, df: pd.DataFrame, index=False, overwrite=False) -> None:
     path = get_path_dynamically(folder, file, check_exists=False)
     if (not overwrite and not path.exists()):
         df.to_csv(path, index=index, na_rep='0')
@@ -138,24 +139,24 @@ def create_csv(folder: str, file:str, df: pd.DataFrame, index=False, overwrite=F
 
 def preprocess_finance_df(df: pd.DataFrame) -> pd.DataFrame:
     features = ['Gemeindename',
-    'Median Einkommen',
-    'Ergänzungsleistungen in % zu Median',
-    'Einkommen aus Vermögenserträgen',
-    'Frei verfügbares Einkommen',
-    '20000',
-    '100000',
-    '1000000',
-    'Total Aktiven',
-    'Finanzvermögen¹',
-    'Verwaltungsvermögen',
-    'Total Passiven',
-    'Fremdkapital',
-    'Eigenkapital',
-    'Spezielfinanzierung EK',
-    'Fond im EK',
-    'Aufwertungsreserven',
-    'überiges Eigentkapital',
-    'Bilanzüberschuss']
+                'Median Einkommen',
+                'Ergänzungsleistungen in % zu Median',
+                'Einkommen aus Vermögenserträgen',
+                'Frei verfügbares Einkommen',
+                '20000',
+                '100000',
+                '1000000',
+                'Total Aktiven',
+                'Finanzvermögen¹',
+                'Verwaltungsvermögen',
+                'Total Passiven',
+                'Fremdkapital',
+                'Eigenkapital',
+                'Spezielfinanzierung EK',
+                'Fond im EK',
+                'Aufwertungsreserven',
+                'überiges Eigentkapital',
+                'Bilanzüberschuss']
     return df[features]
 
 
@@ -163,6 +164,3 @@ def preprocess_finance_df(df: pd.DataFrame) -> pd.DataFrame:
 def merge_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
     df_merged = pd.merge(df1, df2, left_on='Gemeinde', right_on='Gemeindename', how='left')
     return df_merged
-
-
-

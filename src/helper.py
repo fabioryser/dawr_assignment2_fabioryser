@@ -1,6 +1,3 @@
-import pandas as pd
-
-from src.coordinates import find_min_dist_to_next_pronto
 from src.main import *
 
 
@@ -26,6 +23,11 @@ def prepare_dataframe(ranking: pd.DataFrame) -> pd.DataFrame:
     df_final['Score'] = ranking['Score']
     #unset index
     df_final.reset_index(inplace=True)
+
+    df_living = read_csv('data', 'living.csv')
+    df_final['Anzahl Einwohner'] = df_living['Einwohner per 31. Dez 2021'].str.replace("'", "").str.replace(",", ".").astype(float)
+    df_final['Total Fläcke km2'] = df_living['Fläche in km2'].str.replace("'", "").str.replace(",", ".").astype(float)
+    df_final['Anzahl Wohngebäude'] = df_living['Total Anzahl Wohngebäude']
 
     create_csv('data','engineering_final.csv',df_final)
 
