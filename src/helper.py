@@ -1,4 +1,4 @@
-from src.main import *
+from main import *
 
 
 def prepare_dataframe(ranking: pd.DataFrame) -> pd.DataFrame:
