@@ -3,4 +3,5 @@ Stackoverflow - https://stackoverflow.com/questions/4913349/haversine-formula-in
 Stackoverflow - diverses [05.05.2023]
 Austausch mit Kommilitone Pascal Reiss
 https://www.analyticsvidhya.com/blog/2021/09/complete-guide-to-feature-engineering-zero-to-hero/ [05.05.2023]
+https://github.com/pascalreiss/dawr-grisons/ [05.05.2023]
 https://scikit-learn.org/ [05.05.2023]
