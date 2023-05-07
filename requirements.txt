@@ -1,6 +1,9 @@
 numpy
-pandas
+pandas~=1.4.4
 matplotlib
 scikit-learn
 seaborn
-requests
+requests~=2.28.1
+pathlib~=1.0.1
+pylab
+scipy

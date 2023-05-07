@@ -2,6 +2,7 @@ from src.main import *
 
 
 def prepare_dataframe(ranking: pd.DataFrame) -> pd.DataFrame:
+    """prepares the dataframe for the feature engineering"""
     df_municipalities = read_data()
     df_coop = coop_data('coop-pronto.csv')
     df_coop = get_coordinates_for_prontos(df_coop)
